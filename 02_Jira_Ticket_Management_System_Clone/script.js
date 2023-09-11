@@ -13,7 +13,15 @@ let addFlag = false;
 let removeFlag = false;
 const lockClass = "fa-lock";
 const unlockClass = "fa-lock-open";
-let ticketsArr = [];
+
+window.addEventListener("load", () => {
+  let ticketsArr = localStorage.getItem("ticketsArr");
+  if (!ticketsArr) {
+    localStorage.setItem("ticketsArr", JSON.stringify([]));
+  } else {
+    loadTickets();
+  }
+});
 
 allPriorityColors.forEach((colorElem, idx) => {
   colorElem.addEventListener("click", (e) => {
@@ -63,9 +71,7 @@ addBtn.addEventListener("click", () => {
 modalCont.addEventListener("keydown", (e) => {
   if (e.key == "Shift") {
     createTicket(modalPriorityColor, shortid(), textareaCont.value);
-    modalCont.style.display = "none";
-    addFlag = false;
-    textareaCont.value = "";
+    resetModal();
   }
 });
 
@@ -73,7 +79,7 @@ removeBtn.addEventListener("click", () => {
   removeFlag = !removeFlag;
 });
 
-function createTicket(ticketColor, ticketID, ticketTask) {
+function ticketsBody(ticketColor, ticketID, ticketTask) {
   let ticketCont = document.createElement("div");
   ticketCont.setAttribute("class", "ticket-cont");
   ticketCont.innerHTML = `
@@ -84,21 +90,52 @@ function createTicket(ticketColor, ticketID, ticketTask) {
         <i class="fa-solid fa-lock"></i>
       </div>
   `;
-  ticketsArr.push({
-    ticketColor,
-    ticketID,
-    ticketTask,
-  });
   mainCont.appendChild(ticketCont);
   handleRemoval(ticketCont);
   handleLock(ticketCont);
   handleColor(ticketCont);
 }
 
+function createTicket(ticketColor, ticketID, ticketTask) {
+  let ticketsArr = localStorage.getItem("ticketsArr");
+  ticketsArr = JSON.parse(ticketsArr);
+  ticketsArr.push({
+    ticketColor,
+    ticketID,
+    ticketTask,
+  });
+  localStorage.setItem("ticketsArr", JSON.stringify(ticketsArr));
+  ticketsBody(ticketColor, ticketID, ticketTask);
+}
+
+function loadTickets() {
+  let ticketsArr = localStorage.getItem("ticketsArr");
+  if (ticketsArr.length == 0) return;
+  ticketsArr = JSON.parse(ticketsArr);
+  ticketsArr.forEach((ticket) => {
+    if (!ticket) {
+      return;
+    }
+    ticketsBody(ticket.ticketColor, ticket.ticketID, ticket.ticketTask);
+  });
+}
+
 function handleRemoval(ticket) {
-  if (removeFlag) {
-    ticket.remove();
-  }
+  const ticketID = ticket.querySelector(".ticket-id");
+  ticket.addEventListener("click", (e) => {
+    if (removeFlag) {
+      let ticketsArr = localStorage.getItem("ticketsArr");
+      ticketsArr = JSON.parse(ticketsArr);
+      for (let i = 0; i < ticketsArr.length; i++) {
+        if (ticketsArr[i]?.ticketID == ticketID.innerText.slice(1)) {
+          delete ticketsArr[i];
+          localStorage.setItem("ticketsArr", JSON.stringify(ticketsArr));
+          break;
+        }
+      }
+      ticket.remove();
+    }
+  });
 }
 
 function handleLock(ticket) {
@@ -127,4 +164,15 @@ function handleColor(ticket) {
     ticketColor.classList.remove(currColor);
     ticketColor.classList.add(colors[newIdx]);
   });
+}
+
+function resetModal() {
+  allPriorityColors.forEach((colorElem) => {
+    colorElem.classList.remove("border");
+  });
+  allPriorityColors[allPriorityColors.length - 1].classList.add("border");
+  modalPriorityColor = colors[colors.length - 1];
+  modalCont.style.display = "none";
+  addFlag = false;
+  textareaCont.value = "";
 }
