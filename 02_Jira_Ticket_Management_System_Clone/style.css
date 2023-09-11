@@ -6,7 +6,6 @@
   list-style: none;
   text-decoration: none;
 }
-
 .toolbox-cont {
   height: 5rem;
   background-color: #4b4b4b;
@@ -68,6 +67,7 @@
   top: calc((100vh - 50vh) / 2);
   left: calc((100vw - 45vw) / 2);
   display: none;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.5);
 }
 .textarea-cont {
   height: 100%;
@@ -107,17 +107,19 @@
   height: 13rem;
   width: 16rem;
   background-color: #f1f2f6;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
 .ticket-color {
   height: 1rem;
 }
 .ticket-id {
   height: 2rem;
-  padding: 0.4rem;
+  padding: 0.6rem;
 }
 .task-area {
   height: calc(100% - 1rem - 2rem - 2rem);
-  padding: 0.4rem;
+  padding: 0.6rem;
   outline: none;
 }
 .ticket-lock {
@@ -127,4 +129,57 @@
   justify-content: flex-end;
   padding-right: 1rem;
   color: #a5b1c2;
+}
+
+@media screen and (min-width: 425px) and (max-width: 768px) {
+  .modal-cont {
+    width: 70vw;
+    left: calc((100vw - 70vw) / 2);
+  }
+  .toolbox-cont > * {
+    margin: 0 auto;
+  }
+  .toolbox-priority-cont {
+    width: 14rem;
+  }
+  .action-btn-cont {
+    width: 6rem;
+  }
+  .action-btn-cont > * {
+    font-size: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .modal-cont {
+    width: 90vw;
+    top: calc((100vh - 40vh) / 2);
+    left: calc((100vw - 90vw) / 2);
+    flex-direction: column;
+    height: 75%;
+  }
+  .textarea-cont {
+    width: 100%;
+  }
+  .priority-colors-cont {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 25%;
+  }
+  .priority-color {
+    width: 17%;
+  }
+  .toolbox-cont > * {
+    margin: 0 auto;
+  }
+  .toolbox-priority-cont {
+    width: 12rem;
+  }
+  .action-btn-cont {
+    width: 6rem;
+  }
+  .action-btn-cont > * {
+    font-size: 1.5rem;
+  }
 }

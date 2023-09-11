@@ -14,6 +14,12 @@ let removeFlag = false;
 const lockClass = "fa-lock";
 const unlockClass = "fa-lock-open";
 
+mainCont.addEventListener("click", () => {
+  if (modalCont.style.display == "flex") {
+    resetModal();
+  }
+});
+
 window.addEventListener("load", () => {
   let ticketsArr = localStorage.getItem("ticketsArr");
   if (!ticketsArr) {
