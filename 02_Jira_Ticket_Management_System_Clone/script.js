@@ -30,6 +30,7 @@ allPriorityColors.forEach((colorElem, idx) => {
     });
     colorElem.classList.add("border");
     modalPriorityColor = colorElem.classList[1];
+    textareaCont.focus();
   });
 });
 
@@ -68,8 +69,9 @@ addBtn.addEventListener("click", () => {
   textareaCont.focus();
 });
 
-modalCont.addEventListener("keydown", (e) => {
-  if (e.key == "Shift") {
+modalCont.addEventListener("keydown", (event) => {
+  if (event.ctrlKey && event.keyCode == 13) {
+    if (textareaCont.value.length == 0) return;
     createTicket(modalPriorityColor, shortid(), textareaCont.value);
     resetModal();
   }
@@ -141,6 +143,7 @@ function handleRemoval(ticket) {
 function handleLock(ticket) {
   let ticketLockElem = ticket.querySelector(".ticket-lock");
   let ticketTaskArea = ticket.querySelector(".task-area");
+  let ticketID = ticket.querySelector(".ticket-id");
   let ticketLock = ticketLockElem.children[0];
   ticketLock.addEventListener("click", () => {
     if (ticketLock.classList.contains(lockClass)) {
@@ -151,18 +154,38 @@ function handleLock(ticket) {
       ticketLock.classList.remove(unlockClass);
       ticketLock.classList.add(lockClass);
       ticketTaskArea.setAttribute("contenteditable", "false");
+      let ticketsArr = localStorage.getItem("ticketsArr");
+      ticketsArr = JSON.parse(ticketsArr);
+      for (let i = 0; i < ticketsArr.length; i++) {
+        if (ticketsArr[i]?.ticketID == ticketID.innerText.slice(1)) {
+          ticketsArr[i].ticketTask = ticketTaskArea.innerText;
+          localStorage.setItem("ticketsArr", JSON.stringify(ticketsArr));
+          break;
+        }
+      }
+      localStorage.setItem("ticketsArr", JSON.stringify(ticketsArr));
     }
   });
 }
 
 function handleColor(ticket) {
   let ticketColor = ticket.querySelector(".ticket-color");
+  let ticketID = ticket.querySelector(".ticket-id");
   ticketColor.addEventListener("click", () => {
     let currColor = ticketColor.classList[1];
     let idx = colors.indexOf(currColor);
     let newIdx = (idx + 1) % colors.length;
     ticketColor.classList.remove(currColor);
     ticketColor.classList.add(colors[newIdx]);
+    let ticketsArr = localStorage.getItem("ticketsArr");
+    ticketsArr = JSON.parse(ticketsArr);
+    for (let i = 0; i < ticketsArr.length; i++) {
+      if (ticketsArr[i]?.ticketID == ticketID.innerText.slice(1)) {
+        ticketsArr[i].ticketColor = colors[newIdx];
+        localStorage.setItem("ticketsArr", JSON.stringify(ticketsArr));
+        break;
+      }
+    }
   });
 }
 
